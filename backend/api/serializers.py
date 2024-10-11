@@ -10,8 +10,7 @@ class CustomUserCreateSerializer(UserCreateSerializer):
         model = User
         fields = ('id', 'username', 'email', 'password', 'first_name', 'last_name', 'profile_picture')  
         extra_kwargs = {
-            'email': {'required': True, 'allow_blank': False, 'validators': []},
-            'first_name': {'required': True}, 
+            'email': {'required': True, 'allow_blank': False, 'validators': []}, 
         }
 
     def validate_email(self, value):

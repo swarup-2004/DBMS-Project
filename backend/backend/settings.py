@@ -49,9 +49,15 @@ INSTALLED_APPS = [
     'django_filters',
     "api",
     "auth_blacklist",
+    'django.contrib.sites',
+    'corsheaders',
 ]
 
+SITE_ID = 2
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -60,6 +66,13 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5173',  # Frontend URL
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
 
 ROOT_URLCONF = "backend.urls"
 
@@ -190,10 +203,9 @@ DJOSER = {
     'LOGIN_FIELD': 'username', 
     'TOKEN_MODEL': None, 
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
-    'USERNAME_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
-    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}/',
+    'USERNAME_RESET_CONFIRM_URL': 'reset-username/{uid}/{token}',
+    'PASSWORD_RESET_CONFIRM_URL': 'reset-password/{uid}/{token}/',
     'SEND_ACTIVATION_EMAIL': True,
-    'ACTIVATION_URL': 'password/activation/confirm/{uid}/{token}',
     'ACTIVATION_URL': 'activate/{uid}/{token}/',
     'SERIALIZERS': {
         'user_create': 'api.serializers.CustomUserCreateSerializer',
