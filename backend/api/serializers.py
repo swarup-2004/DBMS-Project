@@ -29,7 +29,7 @@ class CustomUserSerializer(UserSerializer):
 class BookmarkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bookmark
-        fields = ['id', 'url', 'description', 'timestamp']
+        fields = "__all__"
         read_only_fields = ['user']
 
 

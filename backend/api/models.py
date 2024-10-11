@@ -25,6 +25,8 @@ class CustomUser(AbstractUser):
 class Bookmark(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='bookmarks')
     url = models.URLField()
+    title = models.CharField(max_length=255, default="Untitled")
+    category = models.CharField(max_length=255, default="General")
     description = models.TextField(blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
