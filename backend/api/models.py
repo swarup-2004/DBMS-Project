@@ -27,6 +27,7 @@ class Bookmark(models.Model):
     url = models.URLField()
     title = models.CharField(max_length=255)
     category = models.CharField(max_length=255)
+    meta_description = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 

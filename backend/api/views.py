@@ -46,11 +46,11 @@ class BookmarkViewSet(viewsets.ModelViewSet):
         print(type(description))
         print("desc", description)
 
-        if  not description:
-            description = generate_bookmark_description(url)
+        meta_description, description = generate_bookmark_description(url)
 
         data = {
             'url': url,
+            "meta_description": meta_description,
             'description': description,
             'user': request.user.id,
             'title': title,

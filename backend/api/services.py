@@ -1,18 +1,12 @@
 import requests
 from bs4 import BeautifulSoup
-# from transformers import GPT2LMHeadModel, GPT2Tokenizer
-
-# # Load GPT-2 model and tokenizer
-# model_name = "gpt2"
-# model = GPT2LMHeadModel.from_pretrained(model_name)
-# tokenizer = GPT2Tokenizer.from_pretrained(model_name)
+from transformers import pipeline
+import torch
 
 
 def generate_bookmark_description(url):
     try:
-        # print("fetching")
         response = requests.get(url)
-        # print("received")
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
         raise ValueError(f"Failed to fetch page: {str(e)}")
@@ -20,73 +14,44 @@ def generate_bookmark_description(url):
     # Parse the page using BeautifulSoup
     soup = BeautifulSoup(response.content, 'html.parser')
 
+    page_text = soup.get_text(separator=' ', strip=True)
+
+    # Extract the meta description
+    meta_description_tag = soup.find('meta', attrs={'name': 'description'})
     
-    meta_description = soup.find('meta', attrs={'name': 'description'})
-    # print(meta_description)
-    if meta_description and meta_description.get('content'):
-        return meta_description['content']
-    # else:
-    #     return generate_summary_using_gpt2(soup.get_text())
+    # Convert meta description to a string (handle None case)
+    if meta_description_tag and 'content' in meta_description_tag.attrs:
+        meta_description = meta_description_tag['content']
+    else:
+        meta_description = "No meta description available"
+
+    # Generate summary of the page
+    description = generate_summary(page_text)
+
+    return meta_description, description
 
 
-# def generate_summary_using_gpt2(page_text):
-#     # Limit the input size for GPT-2 (since it's not trained for long contexts)
-#     max_input_length = 512
-#     input_text = page_text[:max_input_length] if len(page_text) > max_input_length else page_text
 
-#     inputs = tokenizer.encode(input_text, return_tensors="pt")
+def generate_summary(page_text):
+    summarizer = pipeline("summarization")
 
-#     # Generate description using GPT-2
-#     outputs = model.generate(inputs, max_length=50, num_return_sequences=1, no_repeat_ngram_size=2)
+    # If the text is long, you might want to split it into smaller chunks
+    max_input_length = 1024  # Max tokens for many models
+    # print(page_text)
+    chunks = [page_text[i:i + max_input_length] for i in range(0, len(page_text), max_input_length)]
+
+
     
-#     # Decode generated text
-#     return tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# import requests
-# from bs4 import BeautifulSoup
-# from langchain.llms import HuggingFaceHub
-
-
-# def generate_description_from_url(url):
-#     # Step 1: Get the web page content
-#     try:
-#         response = requests.get(url)
-#     except requests.exceptions.RequestException as e:
-#         raise ValueError(f"Failed to fetch page: {str(e)}") from e
-#     # Step 2: Parse the page using BeautifulSoup
-#     soup = BeautifulSoup(response.content, 'html.parser')
-
-#     # Step 3: Try to find the meta description
-#     meta_description = soup.find('meta', attrs={'name': 'description'})
-#     if meta_description and meta_description.get('content'):
-#         return meta_description['content']
-#     else:
-#         # If no meta description is found, summarize the page content
-#         return generate_summary(soup.get_text())
     
-# def generate_summary(page_text):
-#     # You can customize this to use a smaller, faster model if needed
-#     model = HuggingFaceHub(repo_id="facebook/bart-large-cnn", model_kwargs={"temperature": 0.7})
+    # Summarize each chunk and combine results
+    summary = []
+    for chunk in chunks:
+        # print(chunk)
+        summary_chunk = summarizer(chunk, max_length=130, min_length=30, do_sample=False)
+        # print()
+        # print(summary_chunk[0]['summary_text'])
+        summary.append(summary_chunk[0]['summary_text'])
     
-#     # Pass the page content to the model to generate a summary
-#     return model.generate(page_text)
-   
-
+    # Combine summaries
+    final_summary = ' '.join(summary)
+    return final_summary

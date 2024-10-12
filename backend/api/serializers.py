@@ -29,7 +29,7 @@ class CustomUserSerializer(UserSerializer):
 class BookmarkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bookmark
-        fields = ('id', 'url', 'title', 'category', 'description')
+        fields = ('id', 'url', 'title', 'category', 'meta_description', 'description')
         extra_kwargs = {
             'url': {'required': True, 'allow_blank': False, 'validators': []}, 
             'title' :{'required': False},
