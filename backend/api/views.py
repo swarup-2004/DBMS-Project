@@ -41,6 +41,8 @@ class BookmarkViewSet(viewsets.ModelViewSet):
             return Response({"error": "URL is required."}, status=status.HTTP_400_BAD_REQUEST)
         
         description = request.data.get('description')
+        title = request.data.get('title')
+        category = request.data.get('category')
         print(type(description))
         print("desc", description)
 
@@ -50,7 +52,9 @@ class BookmarkViewSet(viewsets.ModelViewSet):
         data = {
             'url': url,
             'description': description,
-            'user': request.user.id
+            'user': request.user.id,
+            'title': title,
+            'category': category,
         }
 
         serializer = self.get_serializer(data=data)
