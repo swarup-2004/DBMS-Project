@@ -65,3 +65,7 @@ class BookmarkViewSet(viewsets.ModelViewSet):
         
         # Return the serialized data with a 201 response (created)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+
+
+

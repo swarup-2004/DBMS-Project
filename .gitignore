@@ -1,4 +1,3 @@
 /venv
 .env
-temp.ipynb
-.ipynb_checkpoints
+/tempenv
