@@ -1,0 +1,15 @@
+{
+  "builds": [
+    {
+      "src": "backend/wsgi.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "backend/wsgi.py"
+    }
+  ],
+  "buildCommand": "apt-get update && apt-get install -y pkg-config libmysqlclient-dev && pip install -r backend/requirements.txt"
+}
